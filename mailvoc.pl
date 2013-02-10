@@ -10,16 +10,17 @@ use Mail::Box::Mbox;
 use POSIX qw(strftime);
 
 $| = 1;
+print "Setting up\n";
 
 my $filename = $ARGV[0] || die "Please specify a filename";
 
 # Setup
 my $folder = new Mail::Box::Mbox(folder => $filename) || die "Problem opening $filename: $!";
 my $stripper = new HTML::Strip;
-my $stemmer = Lingua::Stem->new(-locale => 'EN-US');
+my $stemmer = Lingua::Stem->new(-locale => "EN-US");
 $stemmer->stem_caching({-level => 2});
 
-print "Parsing...\n";
+print "Parsing\n";
 
 my %stems_by_date = [];
 foreach my $message ($folder->messages) {
@@ -42,6 +43,7 @@ foreach my $message ($folder->messages) {
 }
 
 # Gather stats
+print "Compiling stats\n";
 my @dates;
 my @uniques;
 my @totals;
