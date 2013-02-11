@@ -29,7 +29,7 @@ foreach my $message (@messages) {
 
   # Parse date
   my $date = $message->head->get("date");
-  my $date_key = strftime("%Y-%m-%d", localtime(str2time($date)));
+  my $date_key = strftime("%Y-%m", localtime(str2time($date)));
 
   # Parse body and reject some junk if we can
   my $body = first {$_->isText} map {$_->decoded} $message->parts;
