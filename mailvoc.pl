@@ -20,10 +20,12 @@ my $stripper = new HTML::Strip;
 my $stemmer = Lingua::Stem->new(-locale => "EN-US");
 $stemmer->stem_caching({-level => 2});
 
-print "Parsing\n";
+my @messages = $folder->messages;
+print "Parsing " . (scalar @messages) . " messages";
 
 my %stems_by_date = [];
-foreach my $message ($folder->messages) {
+my $i = 0;
+foreach my $message (@messages) {
 
   # Parse date
   my $date = $message->head->get("date");
@@ -40,7 +42,9 @@ foreach my $message ($folder->messages) {
 
   push @{$stems_by_date{$date_key}}, @$stems;
 
+  print "." if ($i++ % (scalar @messages / 10) == 0);
 }
+print "\n";
 
 # Gather stats
 print "Compiling stats\n";
