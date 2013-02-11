@@ -2,12 +2,14 @@
 use strict;
 use Date::Parse qw(str2time);
 use HTML::Strip;
+use LWP::Simple qw(getstore);
 use Lingua::EN::Splitter qw(words);
 use Lingua::Stem;
 use List::MoreUtils qw(uniq);
 use List::Util qw(first sum);
 use Mail::Box::Mbox;
 use POSIX qw(strftime);
+use URI::GoogleChart;
 
 $| = 1;
 print "Setting up\n";
@@ -51,12 +53,40 @@ print "Compiling stats\n";
 my @dates;
 my @uniques;
 my @totals;
-foreach my $date (keys %stems_by_date) {
+foreach my $date (sort keys %stems_by_date) {
   push @dates, $date;
   push @uniques, scalar uniq @{$stems_by_date{$date}};
   push @totals, scalar @{$stems_by_date{$date}};
 }
 
-for(my $i; $i < $#dates; $i++) {
-  print "$dates[$i]: $uniques[$i] unique of total $totals[$i]\n";
+# Build a chart
+print "Building chart\n";
+my @data = map {$uniques[$_] / ($totals[$_] || 1) * 100} (0 .. $#totals);
+
+# Select every sixth date for labels
+my $i = 0;
+my @labels = grep {$i++ % 10 == 0} @dates;
+
+my $chart = new URI::GoogleChart(
+  "lines",
+  600,
+  500,
+  data => \@data,
+  min => 0,
+  max => 100,
+  range_round => 1,
+  chxl => "0:|" . (join "||||||||||", @labels),
+  range_show => "left",
+  label => "% unique words",
+  color => "blue",
+  chxt => "x",
+  encoding => "e",
+);
+
+print "Fetching chart\n";
+my $status = getstore($chart, "chart.png");
+if ($status == 200) {
+  print "Chart saved in chart.png\n";
+} else {
+  print "Error getting chart: $status\n";
 }
