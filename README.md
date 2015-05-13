@@ -5,7 +5,7 @@ Analyze your email vocabulary
 
 ![Chart](http://kbarrette.github.com/mailvoc/chart.png)
 
-Inspired by [a Radiolab episode](http://www.radiolab.org/blogs/radiolab-blog/2010/jul/26/secrets-of-success/),
+Inspired by [a Radiolab episode](http://www.radiolab.org/story/91960-vanishing-words/),
 this script analyzes an mbox file and plots the number of distinct words used vs time.  This utility relies
 on [Google Charts](https://developers.google.com/chart/).
 
